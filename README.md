@@ -17,13 +17,13 @@ Personalized-Spotify is a personal project aimed at creating a website where use
 - **Database**: SQLite (or PostgreSQL/MySQL for production)
 - **Deployment**: Docker, Microsoft Azure
 
-### Usage
+## Usage
 1. Log in with your Spotify account.
 2. Enter 5 song names along with their respective artists.
 3. Choose the number of songs for your playlist (50, 100, or 150).
 4. Generate your personalized playlist and enjoy!
 
-### Acknowledgements
+## Acknowledgements
 - Thanks to [Spotify](https://developer.spotify.com/documentation/web-api/) for their great API.
 - Thanks to [Spotipy](https://spotipy.readthedocs.io/en/2.23.0_a/) for their amazing API.
 - Inspired by the need for more personalized music recommendations.
