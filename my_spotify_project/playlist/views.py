@@ -61,12 +61,14 @@ def create_playlist(request):
     Prompts the user to input 3 seed tracks (artist and track name).
     Searches for these tracks on Spotify and returns a list of their track IDs.
 """
-def get_seed_tracks(client):
-
+def get_seed_tracks(request, client):
+    """
+    Retrieves seed tracks based on user input from the frontend.
+    """
     seed_track_ids = []
     for i in range(3):
-        artist = input(f"Enter the artist for seed track {i + 1}: ")
-        track_name = input(f"Enter the track name for seed track {i + 1}: ")
+        artist = request.POST.get(f'artist_{i + 1}')
+        track_name = request.POST.get(f'track_name_{i + 1}')
         
         search_result = client.search(q=f'artist:{artist} track:{track_name}')
         track_id = search_result['tracks']['items'][0]['id']
