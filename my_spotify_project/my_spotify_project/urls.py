@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include 
+from playlist.views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('playlist/', include('playlist.urls')),
+    path('', index, name='index'),  # Route base URL to React app
 ]
