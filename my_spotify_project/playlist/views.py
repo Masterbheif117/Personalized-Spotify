@@ -53,8 +53,10 @@ def create_playlist(request):
         return redirect('/login')
     
     client = spotipy.Spotify(auth=token_info['access_token'])
-    seed_tracks = get_seed_tracks(client)
-    playlist_url = create_curated_playlist(client, seed_tracks)
+    seed_tracks = get_seed_tracks(request, client)
+    playlist_length = int(request.POST.get('num_songs'))
+    playlist_name = request.POST.get('playlist_name')
+    playlist_url = create_curated_playlist(client, seed_tracks, playlist_length, playlist_name)
     return JsonResponse({'playlist_url': playlist_url})
 
 """
@@ -66,7 +68,7 @@ def get_seed_tracks(request, client):
     Retrieves seed tracks based on user input from the frontend.
     """
     seed_track_ids = []
-    for i in range(3):
+    for i in range(5):
         artist = request.POST.get(f'artist_{i + 1}')
         track_name = request.POST.get(f'track_name_{i + 1}')
         
@@ -74,42 +76,19 @@ def get_seed_tracks(request, client):
         track_id = search_result['tracks']['items'][0]['id']
         seed_track_ids.append(track_id)
     return seed_track_ids
-
 """
     Creates a curated playlist based on the provided seed tracks.
     Retrieves song recommendations from Spotify and creates a new playlist 
     for the user with these recommended tracks.
 """
 
-def create_curated_playlist(client, tracks):
-    
-    recommendations = client.recommendations(seed_tracks=tracks, limit=50)
+def create_curated_playlist(client, tracks, playlist_length, playlist_name):
+    recommendations = client.recommendations(seed_tracks=tracks, limit=playlist_length)
     track_uris = [track['uri'] for track in recommendations['tracks']]
     
     user_id = client.current_user()['id']
-    playlist_name = "My Playlist"
     playlist = client.user_playlist_create(user_id, playlist_name, public=True)
     
     client.playlist_add_items(playlist['id'], track_uris)
+    return playlist['external_urls']['spotify']
 
-"""
-    Main function that orchestrates the process:
-    - Creates a Spotify client
-    - Fetches seed tracks from the user
-    - Creates a curated playlist based on the seed tracks
-"""
-def main():
-  
-    try:
-        print("Creating Spotify client...")
-        client = create_spotify_client()
-        print("Fetching seed tracks...")
-        tracks_to_create_playlist = get_seed_tracks(client)
-        print("Creating curated playlist...")
-        create_curated_playlist(client, tracks_to_create_playlist)
-        print("Done!")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-if __name__ == '__main__':
-    main()
