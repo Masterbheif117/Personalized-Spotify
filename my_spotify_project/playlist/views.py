@@ -4,8 +4,8 @@ from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.shortcuts import render
-
+from django.http import HttpResponse
+from pathlib import Path
 
 # Create your views here.
 # Load environment variables from .env file
@@ -13,7 +13,12 @@ load_dotenv()
 
 
 def index(request):
-    return render(request, 'frontend/build/index.html')
+    base_dir = Path(__file__).resolve().parent.parent.parent
+    index_path = base_dir / 'frontend' / 'build' / 'index.html'
+    if index_path.exists():
+        return render(request, 'frontend/build/index.html')
+    else:
+        return HttpResponse(f"File not found: {index_path}")
 
 """
     Creates and returns a Spotify client using the Spotipy library.
